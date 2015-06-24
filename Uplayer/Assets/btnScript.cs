@@ -7,27 +7,46 @@ using System.Text.RegularExpressions;
 
 public class btnScript : MonoBehaviour {
 	string htmlCode;
-
-	string url = "http://compass.surface.com/assets/67/8a/678abbb4-49dd-4d7d-a50e-0b6c500d06f1.mp4?n=Troy_web_spin_black_md.mp4";
+	WWW www;
+	string url = "http://compass.xbox.com/assets/bb/f4/bbf40fe6-3e14-470b-92fb-71a6734eb715.mp4?n=Troy_WebVideo_Paddles.mp4";
 	
-	IEnumerator Start() {
-
-
-		yield return StartCoroutine("Download");
-	}
+//	IEnumerator Start() {
+//
+//
+//		yield return StartCoroutine("Download");
+//		init ();
+//	}
 
 	IEnumerator Download() {
-		// Start a download of the given URL
-		WWW www = new WWW(url);
-		
-		// Wait for download to complete
-		yield return www;
-		
-		string fileName = @"Assets/" + "video.mp4";
+//		// Start a download of the given URL
+//
+		bool isDownloaded = false; 
+		www = new WWW(url);
+
+
+		while (!isDownloaded) {
+			Debug.Log((int)(www.progress*100)+"%");
+
+
+			if (www.progress==1) {
+				isDownloaded=true;
+			}
+
+			yield return new WaitForEndOfFrame();
+		}
+//
+//
+//		// Wait for download to complete
+//		yield return www;
+
+
+		//yield return www;
+		yield return new WaitForEndOfFrame ();
+		string fileName = Application.persistentDataPath+"/" + "video.mp4";
 		Debug.Log (fileName);
 		System.IO.File.WriteAllBytes (fileName, www.bytes);
 
-		init ();
+
 
 	
 	}
@@ -35,10 +54,12 @@ public class btnScript : MonoBehaviour {
 
 
 	// Use this for initialization
-	void init () {
+	IEnumerator Start () {
 		//download ();
 	//	StartCoroutine("download");
 //yield WaitForEndOfFrame
+	
+
 		using (WebClient client = new WebClient())
 		{
 			htmlCode = client.DownloadString("http://www.xbox.com/en-US/xbox-one/accessories/controllers/elite-wireless-controller");
@@ -65,14 +86,14 @@ public class btnScript : MonoBehaviour {
 			}
 
 			//sw.WriteLine(htmlCode);
-
+			yield return StartCoroutine("Download");
 			Debug.Log("finishWriting");
 		}
 	}
 	
 	// Update is called once per frame
 	void Update () {
-	
+
 	}
 
 	public void playTheVideo(){

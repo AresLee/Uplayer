@@ -7,8 +7,38 @@ using System.Text.RegularExpressions;
 
 public class btnScript : MonoBehaviour {
 	string htmlCode;
+
+	string url = "http://compass.surface.com/assets/67/8a/678abbb4-49dd-4d7d-a50e-0b6c500d06f1.mp4?n=Troy_web_spin_black_md.mp4";
+	
+	IEnumerator Start() {
+
+
+		yield return StartCoroutine("Download");
+	}
+
+	IEnumerator Download() {
+		// Start a download of the given URL
+		WWW www = new WWW(url);
+		
+		// Wait for download to complete
+		yield return www;
+		
+		string fileName = @"Assets/" + "video.mp4";
+		Debug.Log (fileName);
+		System.IO.File.WriteAllBytes (fileName, www.bytes);
+
+		init ();
+
+	
+	}
+
+
+
 	// Use this for initialization
-	void Start () {
+	void init () {
+		//download ();
+	//	StartCoroutine("download");
+//yield WaitForEndOfFrame
 		using (WebClient client = new WebClient())
 		{
 			htmlCode = client.DownloadString("http://www.xbox.com/en-US/xbox-one/accessories/controllers/elite-wireless-controller");

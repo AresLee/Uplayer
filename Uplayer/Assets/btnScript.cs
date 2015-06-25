@@ -16,15 +16,17 @@ public class btnScript : MonoBehaviour {
 	string linksFilted;
 	List<string> videoLinks;
 	List<string> videoNameDisplayGroups;
+	List<string> downloadedVideoNames;
 
 
 
 	// Use this for initialization
 	IEnumerator Start () {
 
-		//initialize the List
+		//initialize the Lists
 		videoLinks = new List<string> ();
 		videoNameDisplayGroups = new List<string> ();
+		downloadedVideoNames = new List<string> ();
 		for (int i = 0; i < 6; i++) {
 
 			Text currentText=GameObject.Find("item"+i+"_text").GetComponent<Text>();
@@ -32,6 +34,16 @@ public class btnScript : MonoBehaviour {
 
 			currentText.transform.FindChild("Button").gameObject.SetActive(false);
 		}
+
+		string[] downloadedVideoArray=Directory.GetFiles(Application.persistentDataPath);
+		
+	
+		//initialize the downloaded list
+		foreach (string d in downloadedVideoArray) {
+			downloadedVideoNames.Add(Path.GetFileName(d));
+		}
+
+
 		yield return null;
 	}
 
@@ -59,7 +71,7 @@ public class btnScript : MonoBehaviour {
 		Debug.Log (fileName);
 		System.IO.File.WriteAllBytes (fileName, www.bytes);
 		
-		
+		//need to update the downloaded list here
 		
 		
 	}
@@ -92,7 +104,14 @@ public class btnScript : MonoBehaviour {
 
 			}
 			
+			string[] downloadedVideoArray=Directory.GetFiles(Application.persistentDataPath);
 
+			sw.WriteLine("Downloaded Videos");
+			sw.WriteLine("-------------------");
+			foreach (string d in downloadedVideoArray) {
+				sw.WriteLine(Path.GetFileName(d));
+
+			}
 			//	yield return StartCoroutine("Download");
 			Debug.Log("finishWriting");
 		}
@@ -133,8 +152,15 @@ public class btnScript : MonoBehaviour {
 
 				Text currentText=GameObject.Find("item"+i+"_text").GetComponent<Text>();
 				currentText.text=(i+1)+". "+videoNameDisplayGroups[i];
+
+				//dynamic text display on download button
 				currentText.transform.FindChild("Button").gameObject.SetActive(true);
-				currentText.transform.FindChild("Button").transform.FindChild("Text").GetComponent<Text>().text="Download";
+				Text textOnDownloadBtn=currentText.transform.FindChild("Button").transform.FindChild("Text").GetComponent<Text>();
+				if (downloadedVideoNames.Contains(videoNameDisplayGroups[i])) {
+					textOnDownloadBtn.text="Watch";
+				}else{
+					textOnDownloadBtn.text="Download";
+				}
 			}
 
 		}

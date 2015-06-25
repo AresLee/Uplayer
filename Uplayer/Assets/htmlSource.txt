@@ -2,3 +2,8 @@ HTML Source Log
 -------------------
 http://video.ch9.ms/ch9/7f92/a02b07c4-7990-4cfe-8e28-8fb8493e7f92/677PHPforAzureM01_high.mp4
 http://video.ch9.ms/ch9/7f92/a02b07c4-7990-4cfe-8e28-8fb8493e7f92/677PHPforAzureM01_mid.mp4
+Downloaded Videos
+-------------------
+.DS_Store
+677PHPforAzureM01_high.mp4
+677PHPforAzureM01_mid.mp4

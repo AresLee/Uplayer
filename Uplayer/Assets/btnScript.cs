@@ -15,9 +15,9 @@ public class btnScript : MonoBehaviour {
 
 	string urlOfTheWebPage;
 	string linksFilted;
-	List<string> videoLinks;
-	List<string> videoNameDisplayGroups;
-	List<string> downloadedVideoNames;
+	List<string> videoLinks;     //stores a list of video links collected from html source of a web page
+	List<string> videoNameDisplayGroups;    //stores a list of file names of the videos
+	List<string> downloadedVideoNames;     //stores a list of file names that have already been downloaded
 
 
 
@@ -84,9 +84,13 @@ public class btnScript : MonoBehaviour {
 		//detect which download button clicked
 		EventSystem eventSystem;
 		eventSystem = GameObject.Find ("EventSystem").GetComponent<EventSystem> ();
+		//value returned based on the index included in the name of the item selected. It is a walk around solusion because Unity doesn't provide listview
+		string resultString=Regex.Match(eventSystem.currentSelectedGameObject.gameObject.transform.parent.name, @"\d+").Value;
+		int indexOfButtonPressed = int.Parse (resultString);
+		Debug.Log (indexOfButtonPressed);
 
 
-		Debug.Log (eventSystem.currentSelectedGameObject.gameObject.transform.parent.name);
+		// if 
 
 
 	}

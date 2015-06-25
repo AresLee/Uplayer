@@ -1,20 +1,12 @@
 HTML Source Log
 -------------------
-http://www.mariowiki.com/images/a/aa/NSMBintro.ogv
-http://www.mariowiki.com/images/a/aa/NSMBintro.ogv
-http://www.mariowiki.com/index.php?title=File:NSMBintro.ogv&amp;oldid=1490964">http://www.mariowiki.com/index.php?title=File:NSMBintro.ogv
-http://www.mariowiki.com/index.php?title=File:NSMBintro.ogv
 Downloaded Videos
 -------------------
 .DS_Store
-677PHPforAzureM01_high.mp4
-678abbb4-49dd-4d7d-a50e-0b6c500d06f1.mp4?n=Troy_web_spin_black_md.mp4
-File:Lava_Tube_secret_path.ogv
-File:Surface_tension_experimental_demonstration.ogv
-Lava_Tube_secret_path.ogv
+.ogv
+Collimated_and_penetration.ogv
+File:Collimated_and_penetration.ogv
 NSMBintro.ogv
-Xbox_Elite_Wireless_Controller.ogv
-bbf40fe6-3e14-470b-92fb-71a6734eb715.mp4?n=Troy_WebVideo_Paddles.mp4
-c10b8915-5bdd-4d39-8c03-81b120614a05.mp4?n=Thumbstick_DPad_Switches_18sec.mp4
-mid-Lava_Tube_secret_path.ogv
-p?c1=2&amp;c2=6177433&amp;c3=&amp;c4=&amp;c5=&amp;c6=&amp;c7=http%3A%2F%2Fjakanddaxter.wikia.com%2Fwiki%2FFile%3ALava_Tube_secret_path.ogv
+Soubor:Collimated_and_penetration.ogv
+index.php?title=Soubor:Collimated_and_penetration.ogv
+p?c1=2&amp;c2=6177433&amp;c3=&amp;c4=&amp;c5=&amp;c6=&amp;c7=http%3A%2F%2Fapple.wikia.com%2Fwiki%2F.ogv

@@ -18,12 +18,16 @@ public class btnScript : MonoBehaviour {
 	List<string> videoLinks;     //stores a list of video links collected from html source of a web page
 	List<string> videoNameDisplayGroups;    //stores a list of file names of the videos
 	List<string> downloadedVideoNames;     //stores a list of file names that have already been downloaded
-	PlayMovie objectFromPlayMovieClass;
-
+//	PlayMovie objectFromPlayMovieClass;
+	Canvas canvasA;
+	Button pauseBtn;
 
 	// Use this for initialization
 	IEnumerator Start () {
-		objectFromPlayMovieClass = new PlayMovie ();
+
+		 canvasA = GameObject.Find ("CanvasA").GetComponent<Canvas> ();
+		pauseBtn = GameObject.Find ("CanvasB").transform.FindChild("PauseBtn").GetComponent<Button> ();
+		//objectFromPlayMovieClass = new PlayMovie ();
 
 		//initialize the Lists
 		videoLinks = new List<string> ();
@@ -114,6 +118,9 @@ public class btnScript : MonoBehaviour {
 			PlayMovie test =PlayMovie.selfObject;
 
 			test.loadVideoAfterDownloading("file://" + Application.persistentDataPath + "/"+videoNameDisplayGroups [indexOfButtonPressed]);
+			PlayMovie.theMovie.Stop();
+			PlayMovie.theAudio.Stop ();
+
 			PlayMovie.theMovie.Play();
 			PlayMovie.theAudio.Play ();
 		}
@@ -128,6 +135,10 @@ public class btnScript : MonoBehaviour {
 	}
 
 	void collectVideoLinksFromSource(string _htmlSource){
+		//release resources
+		videoLinks.Clear();     
+		videoNameDisplayGroups.Clear();    
+	//	downloadedVideoNames.Clear();     
 
 		//split video links from html source of an unknown webpage.
 		using (WebClient client = new WebClient()) {
@@ -165,18 +176,30 @@ public class btnScript : MonoBehaviour {
 		
 	}
 
-	public void playTheVideo(){
-		PlayMovie.theMovie.Play();
-		PlayMovie.theAudio.Play ();
+	public void pauseBtnFunc(){
+
+
+		if (PlayMovie.theMovie.isPlaying) {
+			PlayMovie.theMovie.Pause ();
+			PlayMovie.theAudio.Pause ();
+			pauseBtn.GetComponentInChildren<Text>().text="Play";
+		} else {
+			PlayMovie.theMovie.Play();
+			PlayMovie.theAudio.Play ();
+			pauseBtn.GetComponentInChildren<Text>().text="Pause";
+		
+		}
+
+
 	}
 
 
 
 	public void analyizeUrlBtnFunc(){
-		//release resources
-		videoLinks.Clear();     
-		videoNameDisplayGroups.Clear();    
-		downloadedVideoNames.Clear();     
+		if (PlayMovie.theMovie != null && PlayMovie.theAudio != null) {
+			PlayMovie.theMovie.Stop ();
+			PlayMovie.theAudio.Stop ();
+		}
 
 		if (GameObject.Find("InputField").GetComponent<InputField>().text!="") {
 			//analyze the link inputed
@@ -187,6 +210,30 @@ public class btnScript : MonoBehaviour {
 			putLinksToTheList();
 			Debug.Log("successfully analyzed the link");
 		}
+	}
+
+	public void panelSwitchBtnFunc(){
+
+
+
+		if (canvasA.gameObject.activeInHierarchy) {
+			canvasA.gameObject.SetActive(false);
+			GameObject.Find("panelSwitch").GetComponentInChildren<Text>().text="Panel Off" ;
+			pauseBtn.gameObject.SetActive(true);
+
+		}else{
+			canvasA.gameObject.SetActive(true);
+			GameObject.Find("panelSwitch").GetComponentInChildren<Text>().text="Panel On" ;
+			pauseBtn.gameObject.SetActive(false);
+		}
+
+
+	}
+
+	public void restartBtnFunc(){
+		Material videoMaterial = Resources.Load ("videoMaterial") as Material;
+		videoMaterial.color = Color.white;
+		Application.LoadLevel (0);
 	}
 
 	void putLinksToTheList(){
@@ -209,6 +256,7 @@ public class btnScript : MonoBehaviour {
 				Text textOnDownloadBtn=currentText.transform.FindChild("Button").transform.FindChild("Text").GetComponent<Text>();
 				if (downloadedVideoNames.Contains(videoNameDisplayGroups[i])) {
 					textOnDownloadBtn.text="Watch";
+					Debug.Log("once watched");
 				}else{
 					textOnDownloadBtn.text="Download";
 				}

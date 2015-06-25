@@ -146,6 +146,7 @@ public class btnScript : MonoBehaviour {
 			
 			foreach (Match m in linkParser.Matches(linksFilted)) {
 				sw.WriteLine(m.Value);	//add a video link to the text file
+				if (!videoLinks.Contains(m.Value))
 				videoLinks.Add(m.Value);  //add the link to the videoLinks List
 
 			}
@@ -172,6 +173,10 @@ public class btnScript : MonoBehaviour {
 
 
 	public void analyizeUrlBtnFunc(){
+		//release resources
+		videoLinks.Clear();     
+		videoNameDisplayGroups.Clear();    
+		downloadedVideoNames.Clear();     
 
 		if (GameObject.Find("InputField").GetComponent<InputField>().text!="") {
 			//analyze the link inputed

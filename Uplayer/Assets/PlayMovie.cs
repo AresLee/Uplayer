@@ -26,7 +26,9 @@ public class PlayMovie : MonoBehaviour {
 
 	IEnumerator downloadVideo(){
 		//for loading video source dynamically
-		WWW www = new WWW ("file://" + Application.persistentDataPath + "/Xbox_Elite_Wireless_Controller.ogv");
+		//WWW www = new WWW ("file://" + Application.persistentDataPath + "/Xbox_Elite_Wireless_Controller.ogv");
+		WWW www = new WWW ("http://www.mariowiki.com/images/a/aa/NSMBintro.ogv");
+	
 		Debug.Log ("file://" + Application.persistentDataPath + "/677PHPforAzureM01_high.mp4");
 		Material videoMaterial = Resources.Load ("videoMaterial") as Material;
 		videoMaterial.color = Color.white;

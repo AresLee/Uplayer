@@ -48,19 +48,26 @@ public class btnScript : MonoBehaviour {
 		yield return null;
 	}
 
-	IEnumerator Download() {
+	IEnumerator Download(string _url,string _fileName,Text _tempFileNameText) {
 		//		// Start a download of the given URL
 		//
 		bool isDownloaded = false; 
-		www = new WWW(url);
+		www = new WWW(_url);
 		
 		// Displaying the downloading progress
 		while (!isDownloaded) {
 			Debug.Log((int)(www.progress*100)+"%");
-			
-			
+			string oldFileName=_tempFileNameText.text;
+			_tempFileNameText.text="Downloading: "+(int)(www.progress*100)+"%";
+
 			if (www.progress==1) {
+
+
+				_tempFileNameText.text="downloaded";
+				Text tempBtnText=_tempFileNameText.gameObject.GetComponentInChildren<Button>().GetComponentInChildren<Text>();
+				tempBtnText.text="Watch";
 				isDownloaded=true;
+
 			}
 			
 			yield return new WaitForEndOfFrame();
@@ -68,7 +75,7 @@ public class btnScript : MonoBehaviour {
 
 
 		yield return new WaitForEndOfFrame ();
-		string fileName = Application.persistentDataPath+"/" + "video.mp4";
+		string fileName = Application.persistentDataPath+"/" + _fileName;
 		Debug.Log (fileName);
 		System.IO.File.WriteAllBytes (fileName, www.bytes);
 		
@@ -89,7 +96,17 @@ public class btnScript : MonoBehaviour {
 		int indexOfButtonPressed = int.Parse (resultString);
 		Debug.Log (indexOfButtonPressed);
 
+		if (eventSystem.currentSelectedGameObject.gameObject.GetComponentInChildren<Text>().text=="Download") {
+			Debug.Log("StartDownloading!!!!");
 
+			Text tempFileNameText=eventSystem.currentSelectedGameObject.gameObject.transform.parent.GetComponent<Text>();
+
+			StartCoroutine(Download(videoLinks[indexOfButtonPressed],videoNameDisplayGroups[indexOfButtonPressed],tempFileNameText));
+
+			if (eventSystem.currentSelectedGameObject.gameObject.transform.parent.gameObject.GetComponent<Text>().text=="downloaded") {
+				eventSystem.currentSelectedGameObject.gameObject.GetComponentInChildren<Text>().text="Watch";
+			}
+		}
 		// if 
 
 
@@ -107,7 +124,7 @@ public class btnScript : MonoBehaviour {
 			linksFilted = client.DownloadString (_htmlSource);
 		}
 
-		Regex linkParser = new Regex (@"\b(?:https?://|www\.)\S+.(avi|AVI|wmv|WMV|flv|FLV|mpg|MPG|mp4|MP4)+\b");
+		Regex linkParser = new Regex (@"\b(?:https?://|www\.)\S+.(avi|AVI|wmv|WMV|flv|FLV|mpg|MPG|mp4|MP4|ogv|OGV)+\b");
 
 		//store the video links gotten to an text file for debugging; also store them to the videoLinks List
 		using (StreamWriter sw = new StreamWriter("Assets/htmlSource.txt")) 

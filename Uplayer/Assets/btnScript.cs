@@ -26,7 +26,11 @@ public class btnScript : MonoBehaviour {
 		videoLinks = new List<string> ();
 		videoNameDisplayGroups = new List<string> ();
 		for (int i = 0; i < 6; i++) {
-			GameObject.Find("item"+i+"_text").GetComponent<Text>().text=(i+1)+". "+"Empty";
+
+			Text currentText=GameObject.Find("item"+i+"_text").GetComponent<Text>();
+			currentText.text=(i+1)+". "+"Empty";
+
+			currentText.transform.FindChild("Button").gameObject.SetActive(false);
 		}
 		yield return null;
 	}
@@ -126,7 +130,11 @@ public class btnScript : MonoBehaviour {
 		//update the display list
 		for (int i = 0; i < 6; i++) {
 			if(i<videoNameDisplayGroups.Count){
-			GameObject.Find("item"+i+"_text").GetComponent<Text>().text=(i+1)+". "+videoNameDisplayGroups[i];
+
+				Text currentText=GameObject.Find("item"+i+"_text").GetComponent<Text>();
+				currentText.text=(i+1)+". "+videoNameDisplayGroups[i];
+				currentText.transform.FindChild("Button").gameObject.SetActive(true);
+				currentText.transform.FindChild("Button").transform.FindChild("Text").GetComponent<Text>().text="Download";
 			}
 
 		}

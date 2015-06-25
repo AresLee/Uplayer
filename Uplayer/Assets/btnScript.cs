@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using System.Collections.Generic;
 
 public class btnScript : MonoBehaviour {
@@ -74,6 +75,20 @@ public class btnScript : MonoBehaviour {
 		//need to update the downloaded list here
 		
 		
+	}
+
+	public void downloadBtnFunc(){
+	
+	//	StartCoroutine("Download");
+
+		//detect which download button clicked
+		EventSystem eventSystem;
+		eventSystem = GameObject.Find ("EventSystem").GetComponent<EventSystem> ();
+
+
+		Debug.Log (eventSystem.currentSelectedGameObject.gameObject.transform.parent.name);
+
+
 	}
 
 	// Update is called once per frame

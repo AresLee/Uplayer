@@ -6,30 +6,39 @@ using System.Collections;
 public class PlayMovie : MonoBehaviour {
 	public static MovieTexture theMovie;
 	public static AudioSource theAudio;
+	public static PlayMovie selfObject;
+	
 
 	// Use this for initialization
 	void Start () {
+		selfObject = this;
 		//load the video and its audio component
 
 //		MeshRenderer mr = GetComponent<MeshRenderer> ();
 //
 //		mr.materials [0].color = Color.blue;
 
-		StartCoroutine("downloadVideo");
+
 		//loadVideo ();
-		loadAudio (theMovie);
+
 
 		//play the video with its audio
 //		theMovie.Play();
 //		GetComponent<AudioSource>().Play();
 	}
 
-	IEnumerator downloadVideo(){
+	public void loadVideoAfterDownloading(string _url){
+		StartCoroutine(loadVideo(_url));
+		loadAudio (theMovie);
+	}
+
+	IEnumerator loadVideo(string _url){
 		//for loading video source dynamically
 		//WWW www = new WWW ("file://" + Application.persistentDataPath + "/Xbox_Elite_Wireless_Controller.ogv");
-		WWW www = new WWW ("http://www.mariowiki.com/images/a/aa/NSMBintro.ogv");
+
+		WWW www = new WWW (_url);
 	
-		Debug.Log ("file://" + Application.persistentDataPath + "/677PHPforAzureM01_high.mp4");
+	//	Debug.Log ("file://" + Application.persistentDataPath + "/677PHPforAzureM01_high.mp4");
 		Material videoMaterial = Resources.Load ("videoMaterial") as Material;
 		videoMaterial.color = Color.white;
 		//videoMaterial.color = new Color(1,0,1);
@@ -59,11 +68,11 @@ public class PlayMovie : MonoBehaviour {
 
 	}
 
-	void loadVideo(){
-		Renderer r = GetComponent<Renderer>();
-		theMovie = (MovieTexture)r.material.mainTexture;
-		GameObject.Find("Plane").AddComponent<AudioSource>();
-	}
+//	void loadVideo(){
+//		Renderer r = GetComponent<Renderer>();
+//		theMovie = (MovieTexture)r.material.mainTexture;
+//		GameObject.Find("Plane").AddComponent<AudioSource>();
+//	}
 
 
 	void loadAudio(MovieTexture _videoTexture){

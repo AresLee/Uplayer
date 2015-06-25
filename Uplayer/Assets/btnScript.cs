@@ -18,11 +18,12 @@ public class btnScript : MonoBehaviour {
 	List<string> videoLinks;     //stores a list of video links collected from html source of a web page
 	List<string> videoNameDisplayGroups;    //stores a list of file names of the videos
 	List<string> downloadedVideoNames;     //stores a list of file names that have already been downloaded
-
+	PlayMovie objectFromPlayMovieClass;
 
 
 	// Use this for initialization
 	IEnumerator Start () {
+		objectFromPlayMovieClass = new PlayMovie ();
 
 		//initialize the Lists
 		videoLinks = new List<string> ();
@@ -96,16 +97,25 @@ public class btnScript : MonoBehaviour {
 		int indexOfButtonPressed = int.Parse (resultString);
 		Debug.Log (indexOfButtonPressed);
 
-		if (eventSystem.currentSelectedGameObject.gameObject.GetComponentInChildren<Text>().text=="Download") {
-			Debug.Log("StartDownloading!!!!");
+		if (eventSystem.currentSelectedGameObject.gameObject.GetComponentInChildren<Text> ().text == "Download") {
+			Debug.Log ("StartDownloading!!!!");
 
-			Text tempFileNameText=eventSystem.currentSelectedGameObject.gameObject.transform.parent.GetComponent<Text>();
+			Text tempFileNameText = eventSystem.currentSelectedGameObject.gameObject.transform.parent.GetComponent<Text> ();
 
-			StartCoroutine(Download(videoLinks[indexOfButtonPressed],videoNameDisplayGroups[indexOfButtonPressed],tempFileNameText));
+			StartCoroutine (Download (videoLinks [indexOfButtonPressed], videoNameDisplayGroups [indexOfButtonPressed], tempFileNameText));
 
-			if (eventSystem.currentSelectedGameObject.gameObject.transform.parent.gameObject.GetComponent<Text>().text=="downloaded") {
-				eventSystem.currentSelectedGameObject.gameObject.GetComponentInChildren<Text>().text="Watch";
+			if (eventSystem.currentSelectedGameObject.gameObject.transform.parent.gameObject.GetComponent<Text> ().text == "downloaded") {
+				eventSystem.currentSelectedGameObject.gameObject.GetComponentInChildren<Text> ().text = "Watch";
 			}
+		} else {
+
+		//	objectFromPlayMovieClass.loadVideoAfterDownloading("file://" + Application.persistentDataPath + "/"+videoNameDisplayGroups [indexOfButtonPressed]);
+
+			PlayMovie test =PlayMovie.selfObject;
+
+			test.loadVideoAfterDownloading("file://" + Application.persistentDataPath + "/"+videoNameDisplayGroups [indexOfButtonPressed]);
+			PlayMovie.theMovie.Play();
+			PlayMovie.theAudio.Play ();
 		}
 		// if 
 

@@ -9,10 +9,8 @@ using UnityEngine.EventSystems;
 using System.Collections.Generic;
 
 public class btnScript : MonoBehaviour {
-	//string urlOfTheWebPage;
-	WWW www;
-	string url = "http://compass.surface.com/assets/67/8a/678abbb4-49dd-4d7d-a50e-0b6c500d06f1.mp4?n=Troy_web_spin_black_md.mp4";
 
+	WWW www;
 	string urlOfTheWebPage;
 	string linksFilted;
 	List<string> videoLinks;     //stores a list of video links collected from html source of a web page
@@ -20,26 +18,25 @@ public class btnScript : MonoBehaviour {
 	List<string> downloadedVideoNames;     //stores a list of file names that have already been downloaded
 //	PlayMovie objectFromPlayMovieClass;
 	Canvas canvasA;
-	Button pauseBtn;
+
+	bool isFirstWatch;
 
 	// Use this for initialization
 	IEnumerator Start () {
-
+		isFirstWatch = true;
+		Text infoText = GameObject.Find ("CanvasB").transform.Find("InfoText").GetComponent<Text> ();
+		infoText.text = "Download Folder: \tfile://" + Application.persistentDataPath + "/";
 		 canvasA = GameObject.Find ("CanvasA").GetComponent<Canvas> ();
-		pauseBtn = GameObject.Find ("CanvasB").transform.FindChild("PauseBtn").GetComponent<Button> ();
-		//objectFromPlayMovieClass = new PlayMovie ();
 
+	
 		//initialize the Lists
 		videoLinks = new List<string> ();
 		videoNameDisplayGroups = new List<string> ();
 		downloadedVideoNames = new List<string> ();
-		for (int i = 0; i < 6; i++) {
 
-			Text currentText=GameObject.Find("item"+i+"_text").GetComponent<Text>();
-			currentText.text=(i+1)+". "+"Empty";
-
+			Text currentText=GameObject.Find("item0_text").GetComponent<Text>();
+			currentText.text="File Name: Empty";
 			currentText.transform.FindChild("Button").gameObject.SetActive(false);
-		}
 
 		string[] downloadedVideoArray=Directory.GetFiles(Application.persistentDataPath);
 		
@@ -50,12 +47,12 @@ public class btnScript : MonoBehaviour {
 		}
 
 
-		yield return null;
+		yield return new WaitForEndOfFrame();
 	}
 
 	IEnumerator Download(string _url,string _fileName,Text _tempFileNameText) {
-		//		// Start a download of the given URL
-		//
+		// Start a download of the given URL
+
 		bool isDownloaded = false; 
 		www = new WWW(_url);
 		
@@ -78,21 +75,17 @@ public class btnScript : MonoBehaviour {
 			yield return new WaitForEndOfFrame();
 		}
 
-
-		yield return new WaitForEndOfFrame ();
+		//write the file downloaded to the disk
 		string fileName = Application.persistentDataPath+"/" + _fileName;
 		Debug.Log (fileName);
 		System.IO.File.WriteAllBytes (fileName, www.bytes);
-		
-		//need to update the downloaded list here
-		
-		
+
 	}
 
 	public void downloadBtnFunc(){
-	
-	//	StartCoroutine("Download");
-
+		
+		//	StartCoroutine("Download");
+		
 		//detect which download button clicked
 		EventSystem eventSystem;
 		eventSystem = GameObject.Find ("EventSystem").GetComponent<EventSystem> ();
@@ -100,131 +93,94 @@ public class btnScript : MonoBehaviour {
 		string resultString=Regex.Match(eventSystem.currentSelectedGameObject.gameObject.transform.parent.name, @"\d+").Value;
 		int indexOfButtonPressed = int.Parse (resultString);
 		Debug.Log (indexOfButtonPressed);
-
+		
 		if (eventSystem.currentSelectedGameObject.gameObject.GetComponentInChildren<Text> ().text == "Download") {
 			Debug.Log ("StartDownloading!!!!");
-
+			
 			Text tempFileNameText = eventSystem.currentSelectedGameObject.gameObject.transform.parent.GetComponent<Text> ();
-
+			
 			StartCoroutine (Download (videoLinks [indexOfButtonPressed], videoNameDisplayGroups [indexOfButtonPressed], tempFileNameText));
-
+			
 			if (eventSystem.currentSelectedGameObject.gameObject.transform.parent.gameObject.GetComponent<Text> ().text == "downloaded") {
 				eventSystem.currentSelectedGameObject.gameObject.GetComponentInChildren<Text> ().text = "Watch";
 			}
 		} else {
-
-		//	objectFromPlayMovieClass.loadVideoAfterDownloading("file://" + Application.persistentDataPath + "/"+videoNameDisplayGroups [indexOfButtonPressed]);
-
-			PlayMovie test =PlayMovie.selfObject;
-
-			test.loadVideoAfterDownloading("file://" + Application.persistentDataPath + "/"+videoNameDisplayGroups [indexOfButtonPressed]);
-			PlayMovie.theMovie.Stop();
-			PlayMovie.theAudio.Stop ();
-
-			PlayMovie.theMovie.Play();
-			PlayMovie.theAudio.Play ();
+			
+			PlayMovie tempObj =GameObject.Find("Plane").GetComponent<PlayMovie>();
+			
+			tempObj.loadVideoAfterDownloading("file://" + Application.persistentDataPath + "/"+videoNameDisplayGroups [0]);
+			
+			if (tempObj.theMovie.isReadyToPlay) {
+				tempObj.theMovie.Play();
+				tempObj.theAudio.Play ();
+			}
 		}
-		// if 
-
-
+	
+		
 	}
+	
 
 	// Update is called once per frame
 	void Update () {
 
 	}
-
-	void collectVideoLinksFromSource(string _htmlSource){
-		//release resources
-		videoLinks.Clear();     
-		videoNameDisplayGroups.Clear();    
-	//	downloadedVideoNames.Clear();     
-
-		//split video links from html source of an unknown webpage.
-		using (WebClient client = new WebClient()) {
-			linksFilted = client.DownloadString (_htmlSource);
-		}
-
-		Regex linkParser = new Regex (@"\b(?:https?://|www\.)\S+.(avi|AVI|wmv|WMV|flv|FLV|mpg|MPG|mp4|MP4|ogv|OGV)+\b");
-
-		//store the video links gotten to an text file for debugging; also store them to the videoLinks List
-		using (StreamWriter sw = new StreamWriter("Assets/htmlSource.txt")) 
-		{
-			Debug.Log("StartToWrite");
-			// Add some text to the file.
-			sw.WriteLine("HTML Source Log");
-			sw.WriteLine("-------------------");
-			
-			foreach (Match m in linkParser.Matches(linksFilted)) {
-				sw.WriteLine(m.Value);	//add a video link to the text file
-				if (!videoLinks.Contains(m.Value))
-				videoLinks.Add(m.Value);  //add the link to the videoLinks List
-
-			}
-			
-			string[] downloadedVideoArray=Directory.GetFiles(Application.persistentDataPath);
-
-			sw.WriteLine("Downloaded Videos");
-			sw.WriteLine("-------------------");
-			foreach (string d in downloadedVideoArray) {
-				sw.WriteLine(Path.GetFileName(d));
-
-			}
-			//	yield return StartCoroutine("Download");
-			Debug.Log("finishWriting");
-		}
-		
-	}
-
-	public void pauseBtnFunc(){
-
-
-		if (PlayMovie.theMovie.isPlaying) {
-			PlayMovie.theMovie.Pause ();
-			PlayMovie.theAudio.Pause ();
-			pauseBtn.GetComponentInChildren<Text>().text="Play";
-		} else {
-			PlayMovie.theMovie.Play();
-			PlayMovie.theAudio.Play ();
-			pauseBtn.GetComponentInChildren<Text>().text="Pause";
-		
-		}
-
-
-	}
-
-
+	
 
 	public void analyizeUrlBtnFunc(){
-		if (PlayMovie.theMovie != null && PlayMovie.theAudio != null) {
-			PlayMovie.theMovie.Stop ();
-			PlayMovie.theAudio.Stop ();
-		}
-
+		videoLinks.Clear();     
+		videoNameDisplayGroups.Clear();    
+		
 		if (GameObject.Find("InputField").GetComponent<InputField>().text!="") {
-			//analyze the link inputed
+			//analyze the link inputed/ simplely store the link inputed for this time
 			urlOfTheWebPage=GameObject.Find("InputField").GetComponent<InputField>().text;
-			collectVideoLinksFromSource(urlOfTheWebPage);
 
+			videoLinks.Add(urlOfTheWebPage);
+		
 			//convert the links to file names and display them on the list
 			putLinksToTheList();
 			Debug.Log("successfully analyzed the link");
 		}
 	}
 
+	void putLinksToTheList(){
+		foreach (string v in videoLinks) {
+			//get the file name from the link. supports multiple videos soon
+			string fileName=Path.GetFileName(v);
+			videoNameDisplayGroups.Add(fileName);
+		}
+		
+		Debug.Log ("videoNameDisplayGroups Count:" + videoNameDisplayGroups.Count);
+		//update the display list
+
+				Text currentText=GameObject.Find("item0_text").GetComponent<Text>();
+				currentText.text=". "+videoNameDisplayGroups[0];
+				
+				//dynamic text display on download button
+				currentText.transform.FindChild("Button").gameObject.SetActive(true);
+				Text textOnDownloadBtn=currentText.transform.FindChild("Button").transform.FindChild("Text").GetComponent<Text>();
+				if (downloadedVideoNames.Contains(videoNameDisplayGroups[0])) {
+					textOnDownloadBtn.text="Watch";
+					Debug.Log("once watched");
+				}else{
+					textOnDownloadBtn.text="Download";
+				}
+			
+		
+		
+		
+	}
+
 	public void panelSwitchBtnFunc(){
-
-
 
 		if (canvasA.gameObject.activeInHierarchy) {
 			canvasA.gameObject.SetActive(false);
-			GameObject.Find("panelSwitch").GetComponentInChildren<Text>().text="Panel Off" ;
-			pauseBtn.gameObject.SetActive(true);
+			GameObject.Find("panelSwitch").GetComponentInChildren<Text>().text="Panel On" ;
+		
 
 		}else{
 			canvasA.gameObject.SetActive(true);
-			GameObject.Find("panelSwitch").GetComponentInChildren<Text>().text="Panel On" ;
-			pauseBtn.gameObject.SetActive(false);
+			GameObject.Find("panelSwitch").GetComponentInChildren<Text>().text="Panel Off" ;
+	
 		}
 
 
@@ -236,37 +192,7 @@ public class btnScript : MonoBehaviour {
 		Application.LoadLevel (0);
 	}
 
-	void putLinksToTheList(){
-		foreach (string v in videoLinks) {
-			//get the file name from the link
-			string fileName=Path.GetFileName(v);
-			videoNameDisplayGroups.Add(fileName);
-		}
 
-		Debug.Log ("videoNameDisplayGroups Count:" + videoNameDisplayGroups.Count);
-		//update the display list
-		for (int i = 0; i < 6; i++) {
-			if(i<videoNameDisplayGroups.Count){
-
-				Text currentText=GameObject.Find("item"+i+"_text").GetComponent<Text>();
-				currentText.text=(i+1)+". "+videoNameDisplayGroups[i];
-
-				//dynamic text display on download button
-				currentText.transform.FindChild("Button").gameObject.SetActive(true);
-				Text textOnDownloadBtn=currentText.transform.FindChild("Button").transform.FindChild("Text").GetComponent<Text>();
-				if (downloadedVideoNames.Contains(videoNameDisplayGroups[i])) {
-					textOnDownloadBtn.text="Watch";
-					Debug.Log("once watched");
-				}else{
-					textOnDownloadBtn.text="Download";
-				}
-			}
-
-		}
-
-
-
-	}
 
 
 
